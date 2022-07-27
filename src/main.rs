@@ -89,6 +89,32 @@ fn rotate(m: &Matrix) -> Matrix {
 }
 
 //
+// Return all different shapes of a matrix
+//
+fn shapes_of(m: &Matrix) -> Vec<Matrix> {
+    let m0 = m.iter().map(|r| r.to_vec()).collect();
+    let m1 = rotate(&m0);
+    let m2 = rotate(&m1);
+    let m3 = rotate(&m2);
+    let m4 = m.iter().map(|r| r.to_vec()).rev().collect();
+    let m5 = rotate(&m4);
+    let m6 = rotate(&m5);
+    let m7 = rotate(&m6);
+
+    let mut all = vec![m0, m1, m2, m3, m4, m5, m6, m7];
+    all.sort();
+
+    let mut set: HashSet<Matrix> = HashSet::new();
+    let mut result : Vec<Matrix> = Vec::new();
+    for shape in &all {
+        if set.insert(shape.to_vec()) {
+            result.push(shape.to_vec());
+        }
+    }
+    return result;
+}
+
+//
 // Return a rotation and symmetry invariant matrix
 //
 fn canonical(m: &Matrix) -> Matrix {
@@ -157,12 +183,16 @@ fn matrix_to_string(m: &Matrix) -> String {
 //
 fn print_gen(heading: &str, l: &Vec<Matrix>) {
     println!("{}", heading);
-    for shape in l {
-        let s = matrix_to_string(&shape);
-        println!("{}", s);
-        println!("");
+    for m in l {
+        println!("{}\n", matrix_to_string(&m));
     }
 }
+
+//
+// Return all board positions of all shapes of a matrix
+//
+//fn all_positions_of(m : &Matrix) -> Vec<u64> {
+//}
 
 //
 // Main
