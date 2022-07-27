@@ -168,15 +168,13 @@ fn print_gen(heading: &str, l: &Vec<Matrix>) {
 // Main
 //
 fn main() {
-    let atom = vec![vec![true; 1]; 1];
-    let gen2 = next_generation(&vec![atom.to_vec(); 1]);
-    let gen3 = next_generation(&gen2);
-    let gen4 = next_generation(&gen3);
-    let gen5 = next_generation(&gen4);
+    let pentominos = 
+        next_generation(
+        &next_generation(
+        &next_generation(
+        &next_generation(
+        &vec![vec![vec![true; 1]; 1];1]
+        ))));
 
-    print_gen("Generation 1", &vec![atom]);
-    print_gen("Generation 2", &gen2);
-    print_gen("Generation 3", &gen3);
-    print_gen("Generation 4", &gen4);
-    print_gen("Generation 5", &gen5);
+    print_gen("Pentominos", &pentominos);
 }
