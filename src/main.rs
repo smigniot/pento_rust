@@ -25,6 +25,9 @@ fn inflate(source: &Matrix) -> Matrix {
     return result;
 }
 
+//
+// Reduce all falsy border lines and columns
+//
 fn deflate(source: &mut Matrix) {
     while !source[0].iter().copied().reduce(|a, b| a | b).unwrap() {
         source.remove(0);
@@ -69,6 +72,9 @@ fn deflate(source: &mut Matrix) {
     }
 }
 
+//
+// Rotate
+//
 fn rotate(m: &Matrix) -> Matrix {
     let h = m.len();
     let w = m[0].len();
@@ -82,6 +88,9 @@ fn rotate(m: &Matrix) -> Matrix {
     return result;
 }
 
+//
+// Return a rotation and symmetry invariant matrix
+//
 fn canonical(m: &Matrix) -> Matrix {
     let m0 = m.iter().map(|r| r.to_vec()).collect();
     let m1 = rotate(&m0);
