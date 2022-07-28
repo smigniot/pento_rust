@@ -162,20 +162,10 @@ fn next_generation(current: &Vec<Matrix>) -> Vec<Matrix> {
 }
 
 //
-// Return a nice displayable string
+// Max impl
 //
-fn matrix_to_string(m: &Matrix) -> String {
-    let rows: Vec<String> = m
-        .iter()
-        .map(|row| {
-            let line: Vec<String> = row
-                .iter()
-                .map(|b| (if *b { "X" } else { "." }).to_string())
-                .collect();
-            return line.join("");
-        })
-        .collect();
-    return rows.join("\n");
+fn maxi(a:usize,b:usize) -> usize {
+    if a>b {a} else {b}
 }
 
 //
@@ -184,7 +174,26 @@ fn matrix_to_string(m: &Matrix) -> String {
 fn print_gen(heading: &str, l: &Vec<Matrix>) {
     println!("{}", heading);
     for m in l {
-        println!("{}\n", matrix_to_string(&m));
+        let l2 = shapes_of(&m);
+        let mut full_h = 0;
+        for s in &l2 { full_h = maxi(full_h,s.len()); }
+        let mut text : Vec<String> = vec!["".to_string();full_h];
+        for s in l2 {
+            let h = s.len();
+            let w = s[0].len();
+            for y in 0..full_h {
+                for x in 0..w {
+                    if y<h {
+                        let c = if s[y][x] { "X" } else { "." };
+                        text[y] += c;
+                    } else {
+                        text[y] += " ";
+                    }
+                }
+                text[y] += " ";
+            }
+        }
+        println!("{}\n", text.join("\n"));
     }
 }
 
