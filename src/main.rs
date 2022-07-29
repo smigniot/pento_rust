@@ -200,8 +200,28 @@ fn print_gen(heading: &str, l: &Vec<Matrix>) {
 //
 // Return all board positions of all shapes of a matrix
 //
-//fn all_positions_of(m : &Matrix) -> Vec<u64> {
-//}
+fn all_positions_of(m : &Matrix) -> Vec<u64> {
+    let two : u64 = 2;
+    let l = shapes_of(&m);
+    let mut result : Vec<u64> = Vec::new();
+    for s in l {
+        let mut y = 0;
+        let mut x;
+        let mut n : u64 = 0;
+        for row in s  {
+            x = 0;
+            for cell in row  {
+                if cell {
+                    n += two.pow(y*10+x);
+                }
+                x+=1;
+            }
+            y+=1;
+        }
+        result.push(n);
+    }
+    return result;
+}
 
 //
 // Main
@@ -215,6 +235,9 @@ fn main() {
             &next_generation(
             &vec![vec![vec![true; 1]; 1]; 1]
             ))));
-
     print_gen("Pentominos", &pentominos);
+    for pentomino in &pentominos {
+        let positions = all_positions_of(&pentomino);
+        println!("Shapes {:?}", positions);
+    }
 }
