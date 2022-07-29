@@ -205,20 +205,28 @@ fn all_positions_of(m : &Matrix) -> Vec<u64> {
     let l = shapes_of(&m);
     let mut result : Vec<u64> = Vec::new();
     for s in l {
-        let mut y = 0;
-        let mut x;
-        let mut n : u64 = 0;
-        for row in s  {
-            x = 0;
-            for cell in row  {
-                if cell {
-                    n += two.pow(y*10+x);
+        let h = s.len();
+        let w = s[0].len();
+        let mut x : usize;
+        let mut y : usize;
+        for dy in 0..(6-h+1) {
+            for dx in 0..(10-w+1) {
+                let mut n : u64 = 0;
+                y = dy;
+                for row in &s  {
+                    x = dx;
+                    for cell in row  {
+                        if *cell {
+                            let p : u32 = (y*10+x) as u32;
+                            n += two.pow(p);
+                        }
+                        x+=1;
+                    }
+                    y+=1;
                 }
-                x+=1;
+                result.push(n);
             }
-            y+=1;
         }
-        result.push(n);
     }
     return result;
 }
