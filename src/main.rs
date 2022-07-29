@@ -244,8 +244,22 @@ fn main() {
             &vec![vec![vec![true; 1]; 1]; 1]
             ))));
     print_gen("Pentominos", &pentominos);
+
+    println!("Shapes");
+    let mut i = "FXYPTWNZLUVI".char_indices();
+    let mut ordered : Vec<(usize,char,Vec<u64>)> = Vec::new();
     for pentomino in &pentominos {
         let positions = all_positions_of(&pentomino);
-        println!("Shapes {:?}", positions);
+        let (_,c) = i.next().unwrap();
+        println!("{} {:?}", c, positions);
+        let tuple = (positions.len(),c,positions);
+        ordered.push(tuple);
+    }
+    ordered.sort();
+
+    println!("");
+    println!("Order");
+    for (n,c,_) in ordered {
+        println!("{} {}", c, n);
     }
 }
