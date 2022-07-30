@@ -259,7 +259,24 @@ fn main() {
 
     println!("");
     println!("Order");
-    for (n,c,_) in ordered {
+    for (n,c,_) in &ordered {
         println!("{} {}", c, n);
+    }
+
+    find_solutions(ordered,Vec::new(),0);
+}
+
+//
+// Walk the solution space
+//
+fn find_solutions(remaining : Vec<(usize,char,Vec<u64>)>,
+        solution : Vec<(char,u64)>,
+        current : u64) {
+    if remaining.is_empty() {
+        println!("Solution {:?}", solution);
+    } else {
+        let (_,letter,candidates) = &remaining[0];
+        let others = &remaining[1..];
+        // TODO
     }
 }
