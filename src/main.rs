@@ -263,20 +263,28 @@ fn main() {
         println!("{} {}", c, n);
     }
 
-    find_solutions(ordered,Vec::new(),0);
+    // Max items in solution vec is 12, capacity 20 prevents pre-allocation
+    find_solutions(ordered,&mut Vec::with_capacity(20),0);
 }
 
 //
 // Walk the solution space
 //
 fn find_solutions(remaining : Vec<(usize,char,Vec<u64>)>,
-        solution : Vec<(char,u64)>,
+        solution : &mut Vec<(char,u64)>,
         current : u64) {
     if remaining.is_empty() {
         println!("Solution {:?}", solution);
     } else {
         let (_,letter,candidates) = &remaining[0];
         let others = &remaining[1..];
-        // TODO
+        for candidate in candidates {
+            if 0 == (candidate & current) {
+                solution.push( (*letter, *candidate) );
+                let next = current | candidate;
+                find_solutions(others.to_vec(), solution, next);
+                solution.pop();
+            }
+        }
     }
 }
