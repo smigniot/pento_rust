@@ -306,10 +306,17 @@ fn find_solutions(
 }
 
 fn holes_five(compiter : &Vec<(u64,u64)>, board:u64) -> bool {
-    // existing   
+    let mut existing : Vec<u64> = Vec::new();
     for (bit,around) in compiter {
         if 0 == (board & bit) {
-            let mut region : u64 = *bit;
+            let (mut truthy,falsy) = existing.iter().partition(
+                |r| 0 != (*r & around)
+            );
+            existing = falsy;
+            truthy.push(*bit);
+            let region = truthy.iter().copied()
+                    .reduce(|a,b| a|b).unwrap();
+            existing.push(region);
             // untouched, tomerge = existing.iter().partition(...)
             // existing = untouched
             // newregion = tomerge+[region].reduce(a|b)
