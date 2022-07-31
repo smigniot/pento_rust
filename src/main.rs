@@ -263,14 +263,28 @@ fn main() {
         println!("{} {}", c, n);
     }
 
+    let two : u64 = 2;
+    let mut compiter : Vec<(u64,u64)> = Vec::new();
+    for y in 0..6 {
+        for x in 0..10 {
+            let bit : u64 = two.pow((y*10+x) as u32);
+            let mut around : u64 = 0;
+            if x>0 { around |= two.pow((y*10+x-1) as u32); }
+            if y>0 { around |= two.pow(((y-1)*10+x) as u32); }
+            compiter.push( (bit,around) );
+        }
+    }
+
     // Max items in solution vec is 12, capacity 20 prevents pre-allocation
-    find_solutions(ordered,&mut Vec::with_capacity(20),0);
+    find_solutions(&compiter,ordered,&mut Vec::with_capacity(20),0);
 }
 
 //
 // Walk the solution space
 //
-fn find_solutions(remaining : Vec<(usize,char,Vec<u64>)>,
+fn find_solutions(
+        compiter : &Vec<(u64,u64)>,
+        remaining : Vec<(usize,char,Vec<u64>)>,
         solution : &mut Vec<(char,u64)>,
         current : u64) {
     if remaining.is_empty() {
@@ -280,11 +294,63 @@ fn find_solutions(remaining : Vec<(usize,char,Vec<u64>)>,
         let others = &remaining[1..];
         for candidate in candidates {
             if 0 == (candidate & current) {
-                solution.push( (*letter, *candidate) );
                 let next = current | candidate;
-                find_solutions(others.to_vec(), solution, next);
-                solution.pop();
+                if holes_five(compiter, next) {
+                    solution.push( (*letter, *candidate) );
+                    find_solutions(compiter, others.to_vec(), solution, next);
+                    solution.pop();
+                }
             }
         }
     }
 }
+
+fn holes_five(compiter : &Vec<(u64,u64)>, board:u64) -> bool {
+    return true;
+}
+
+/*
+const _bit = (x,y)=>{
+    const m = new Uint8Array(8);
+    m[y] = 2**x & 255;
+    return m;
+};
+const _nw = (x,y)=>{
+    const m = new Uint8Array(8);
+    if(y>0) m[y-1] = (2**x & 255);
+    if(x>0) m[y] = (2**(x-1) & 255);
+    return m;
+};
+const compiter = (function(){
+    const result = [];
+    for(let y=0;y<8;y++) {
+        for(let x=0;x<8;x++) {
+            result.push({
+                thebit:_bit(x,y),
+                around:_nw(x,y),
+            });
+        }
+    }
+    return result;
+})();
+function findComponents(board) {
+    const existing = [];
+    compiter.forEach(d=>{
+        const {thebit,around} = d;
+        if(!and(board,thebit)) {
+            // bit is empty
+            let region = thebit;
+            existing.splice(0,existing.length).forEach(reg=>{
+                if(and(around,reg)) {
+                    region = or(region,reg);
+                } else {
+                    existing.push(reg);
+                }
+            });
+            existing.push(region);
+        }
+    });
+    return existing;
+}
+*/
+
