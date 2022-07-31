@@ -306,6 +306,17 @@ fn find_solutions(
 }
 
 fn holes_five(compiter : &Vec<(u64,u64)>, board:u64) -> bool {
+    // existing   
+    for (bit,around) in compiter {
+        if 0 == (board & bit) {
+            let mut region : u64 = *bit;
+            // untouched, tomerge = existing.iter().partition(...)
+            // existing = untouched
+            // newregion = tomerge+[region].reduce(a|b)
+            // existing.push(newregion)
+        }
+    }
+    // check that existing contains only 5 bits multiples
     return true;
 }
 
