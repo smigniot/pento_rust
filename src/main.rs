@@ -263,6 +263,13 @@ fn main() {
         println!("{} {}", c, n);
     }
 
+    let compiter = get_compiter();
+
+    // Max items in solution vec is 12, capacity 20 prevents pre-allocation
+    find_solutions(&compiter,ordered,&mut Vec::with_capacity(20),0);
+}
+
+fn get_compiter() -> Vec<(u64,u64)> {
     let two : u64 = 2;
     let mut compiter : Vec<(u64,u64)> = Vec::new();
     for y in 0..6 {
@@ -274,9 +281,7 @@ fn main() {
             compiter.push( (bit,around) );
         }
     }
-
-    // Max items in solution vec is 12, capacity 20 prevents pre-allocation
-    find_solutions(&compiter,ordered,&mut Vec::with_capacity(20),0);
+    compiter
 }
 
 //
@@ -305,7 +310,7 @@ fn find_solutions(
     }
 }
 
-fn holes_five(compiter : &Vec<(u64,u64)>, board:u64) -> bool {
+fn holes_of(compiter : &Vec<(u64,u64)>, board:u64) -> Vec<u64> {
     let mut existing : Vec<u64> = Vec::new();
     for (bit,around) in compiter {
         if 0 == (board & bit) {
@@ -323,25 +328,82 @@ fn holes_five(compiter : &Vec<(u64,u64)>, board:u64) -> bool {
             // existing.push(newregion)
         }
     }
+    existing
+}
+fn holes_five(compiter : &Vec<(u64,u64)>, board:u64) -> bool {
+    let existing = holes_of(compiter, board);
     let mut fiveonly : bool = true;
-    while fiveonly {
-        for hole in &existing {
-            let mut n = 0;
-            let mut chk = *hole;
-            while chk != 0 {
-                if 0 != (chk & 1) {
-                    n+=1;
-                }
-                chk = chk >> 1;
+    for hole in &existing {
+        let mut n = 0;
+        let mut chk = *hole;
+        while chk != 0 {
+            if 0 != (chk & 1) {
+                n+=1;
             }
-            if n%5 != 0 {
-                fiveonly = false;
-                break;
-            }
+            chk = chk >> 1;
+        }
+        if n%5 != 0 {
+            fiveonly = false;
+            break;
         }
     }
     // check that existing contains only 5 bits multiples
     return fiveonly;
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn test_holes() {
+        let compiter = get_compiter();
+        let board = board_from(
+                "....X.....",
+                "..X.X.....",
+                "XX..X.....",
+                "..XXX.....",
+                "...X......",
+                "....X....."
+            );
+        assert!(holes_five(&compiter, 0));
+        assert!(! holes_five(&compiter, board));
+        let b2 = board_from(
+                "...XX.....",
+                "..X.X.....",
+                "XX..XXXXXX",
+                "X..XX.....",
+                ".XXXX.....",
+                "....X....."
+            );
+        assert!(holes_five(&compiter, b2));
+    }
+
+    fn board_from(s1:&str,s2:&str,s3:&str,s4:&str,s5:&str,s6:&str) -> u64 {
+        let two : u64 = 2;
+        let mut n : u64 = 0;
+        n |= conv_board_row(s1,two.pow(0));
+        n |= conv_board_row(s2,two.pow(10));
+        n |= conv_board_row(s3,two.pow(20));
+        n |= conv_board_row(s4,two.pow(30));
+        n |= conv_board_row(s5,two.pow(40));
+        n |= conv_board_row(s6,two.pow(50));
+        n
+    }
+
+    fn conv_board_row(row:&str,n:u64) -> u64 {
+        let mut result : u64 = 0;
+        let mut i : u64 = n;
+        for c in row.chars() {
+            if 'X' == c {
+                result += i;
+            }
+            i*=2;
+        }
+        result
+    }
+
 }
 
 /*
