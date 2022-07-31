@@ -323,8 +323,25 @@ fn holes_five(compiter : &Vec<(u64,u64)>, board:u64) -> bool {
             // existing.push(newregion)
         }
     }
+    let mut fiveonly : bool = true;
+    while fiveonly {
+        for hole in &existing {
+            let mut n = 0;
+            let mut chk = *hole;
+            while chk != 0 {
+                if 0 != (chk & 1) {
+                    n+=1;
+                }
+                chk = chk >> 1;
+            }
+            if n%5 != 0 {
+                fiveonly = false;
+                break;
+            }
+        }
+    }
     // check that existing contains only 5 bits multiples
-    return true;
+    return fiveonly;
 }
 
 /*
