@@ -200,7 +200,7 @@ fn print_gen(heading: &str, l: &Vec<Matrix>) {
 //
 // Return all board positions of all shapes of a matrix
 //
-fn all_positions_of(m : &Matrix) -> Vec<u64> {
+fn all_positions_of(m : &Matrix, limit_sym:bool) -> Vec<u64> {
     let two : u64 = 2;
     let l = shapes_of(&m);
     let mut result : Vec<u64> = Vec::new();
@@ -209,8 +209,10 @@ fn all_positions_of(m : &Matrix) -> Vec<u64> {
         let w = s[0].len();
         let mut x : usize;
         let mut y : usize;
-        for dy in 0..(6-h+1) {
-            for dx in 0..(10-w+1) {
+        let x1 : usize = if limit_sym { 6 } else { 10 };
+        let y1 : usize = if limit_sym { 4 } else { 6 };
+        for dy in 0..(y1-h+1) {
+            for dx in 0..(x1-w+1) {
                 let mut n : u64 = 0;
                 y = dy;
                 for row in &s  {
@@ -249,8 +251,9 @@ fn main() {
     let mut i = "FXYPTWNZLUVI".char_indices();
     let mut ordered : Vec<(usize,char,Vec<u64>)> = Vec::new();
     for pentomino in &pentominos {
-        let positions = all_positions_of(&pentomino);
         let (_,c) = i.next().unwrap();
+        let limit = c == 'X';
+        let positions = all_positions_of(&pentomino, limit);
         println!("{} {:?}", c, positions);
         let tuple = (positions.len(),c,positions);
         ordered.push(tuple);
@@ -405,49 +408,4 @@ mod tests {
     }
 
 }
-
-/*
-const _bit = (x,y)=>{
-    const m = new Uint8Array(8);
-    m[y] = 2**x & 255;
-    return m;
-};
-const _nw = (x,y)=>{
-    const m = new Uint8Array(8);
-    if(y>0) m[y-1] = (2**x & 255);
-    if(x>0) m[y] = (2**(x-1) & 255);
-    return m;
-};
-const compiter = (function(){
-    const result = [];
-    for(let y=0;y<8;y++) {
-        for(let x=0;x<8;x++) {
-            result.push({
-                thebit:_bit(x,y),
-                around:_nw(x,y),
-            });
-        }
-    }
-    return result;
-})();
-function findComponents(board) {
-    const existing = [];
-    compiter.forEach(d=>{
-        const {thebit,around} = d;
-        if(!and(board,thebit)) {
-            // bit is empty
-            let region = thebit;
-            existing.splice(0,existing.length).forEach(reg=>{
-                if(and(around,reg)) {
-                    region = or(region,reg);
-                } else {
-                    existing.push(reg);
-                }
-            });
-            existing.push(region);
-        }
-    });
-    return existing;
-}
-*/
 
