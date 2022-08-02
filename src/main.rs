@@ -267,9 +267,10 @@ fn main() {
     }
 
     let compiter = get_compiter();
+    let bitcounter = get_bitcounter();
 
     // Max items in solution vec is 12, capacity 20 prevents pre-allocation
-    find_solutions(&compiter,ordered,&mut Vec::with_capacity(20),0);
+    find_solutions(&compiter,bitcounter,ordered,&mut Vec::with_capacity(20),0);
 }
 
 fn get_compiter() -> Vec<(u64,u64)> {
@@ -287,11 +288,28 @@ fn get_compiter() -> Vec<(u64,u64)> {
     compiter
 }
 
+fn get_bitcounter() -> [u8;256] {
+    let mut result : [u8; 256] = [0; 256];
+    for i in 0..256 {
+        let mut n = i;
+        let mut bits = 0;
+        while n>0 {
+            if 0!=(n&1) {
+                bits += 1;
+            }
+            n = n >> 1;
+        }
+        result[i] = bits;
+    }
+    result
+}
+
 //
 // Walk the solution space
 //
 fn find_solutions(
         compiter : &Vec<(u64,u64)>,
+        bitcounter : [u8;256],
         remaining : Vec<(usize,char,Vec<u64>)>,
         solution : &mut Vec<(char,u64)>,
         current : u64) {
@@ -303,9 +321,9 @@ fn find_solutions(
         for candidate in candidates {
             if 0 == (candidate & current) {
                 let next = current | candidate;
-                if holes_five(compiter, next) {
+                if holes_five(compiter, bitcounter, next) {
                     solution.push( (*letter, *candidate) );
-                    find_solutions(compiter, others.to_vec(), solution, next);
+                    find_solutions(compiter, bitcounter, others.to_vec(), solution, next);
                     solution.pop();
                 }
             }
@@ -333,17 +351,15 @@ fn holes_of(compiter : &Vec<(u64,u64)>, board:u64) -> Vec<u64> {
     }
     existing
 }
-fn holes_five(compiter : &Vec<(u64,u64)>, board:u64) -> bool {
+fn holes_five(compiter:&Vec<(u64,u64)>, bitcounter:[u8;256], board:u64) -> bool {
     let existing = holes_of(compiter, board);
     let mut fiveonly : bool = true;
     for hole in &existing {
         let mut n = 0;
         let mut chk = *hole;
         while chk != 0 {
-            if 0 != (chk & 1) {
-                n+=1;
-            }
-            chk = chk >> 1;
+            n += bitcounter[(chk & 255) as usize];
+            chk = chk >> 8;
         }
         if n%5 != 0 {
             fiveonly = false;
@@ -362,6 +378,7 @@ mod tests {
     #[test]
     fn test_holes() {
         let compiter = get_compiter();
+        let bitcounter = get_bitcounter();
         let board = board_from(
                 "....X.....",
                 "..X.X.....",
@@ -370,8 +387,8 @@ mod tests {
                 "...X......",
                 "....X....."
             );
-        assert!(holes_five(&compiter, 0));
-        assert!(! holes_five(&compiter, board));
+        assert!(holes_five(&compiter, bitcounter, 0));
+        assert!(! holes_five(&compiter, bitcounter, board));
         let b2 = board_from(
                 "...XX.....",
                 "..X.X.....",
@@ -380,7 +397,7 @@ mod tests {
                 ".XXXX.....",
                 "....X....."
             );
-        assert!(holes_five(&compiter, b2));
+        assert!(holes_five(&compiter, bitcounter, b2));
     }
 
     fn board_from(s1:&str,s2:&str,s3:&str,s4:&str,s5:&str,s6:&str) -> u64 {
