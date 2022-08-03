@@ -19,3 +19,7 @@ See
 * Inside the pento_rust directory, run `cargo build --release && time ./target/release/pento_rust`
 * Send me a mail with the results :)
 
+# One-liner
+
+`rm -Rf /tmp/pento_rust && git -C /tmp/ clone https://github.com/smigniot/pento_rust.git && cd /tmp/pento_rust && cargo build --release && time ./target/release/pento_rust`
+
