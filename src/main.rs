@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use arrayvec::ArrayVec;
 
 //
 // A naive 2d matrix
@@ -282,14 +283,14 @@ fn main() {
         &compiter,
         bitcounter,
         ordered,
-        &mut Vec::with_capacity(20),
+        &mut ArrayVec::new(),
         0,
     );
 }
 
-fn get_compiter() -> Vec<(u64, u64)> {
+fn get_compiter() -> ArrayVec<(u64, u64), 60> {
     let two: u64 = 2;
-    let mut compiter: Vec<(u64, u64)> = Vec::new();
+    let mut compiter: ArrayVec<(u64, u64), 60> = ArrayVec::new();
     for y in 0..6 {
         for x in 0..10 {
             let bit: u64 = two.pow((y * 10 + x) as u32);
@@ -326,10 +327,10 @@ fn get_bitcounter() -> [u8; 256] {
 // Walk the solution space
 //
 fn find_solutions(
-    compiter: &Vec<(u64, u64)>,
+    compiter: &ArrayVec<(u64, u64), 60>,
     bitcounter: [u8; 256],
     remaining: Vec<(usize, char, Vec<u64>)>,
-    solution: &mut Vec<(char, u64)>,
+    solution: &mut ArrayVec<(char, u64), 12>,
     current: u64,
 ) {
     if remaining.is_empty() {
@@ -351,7 +352,7 @@ fn find_solutions(
     }
 }
 
-fn holes_of(compiter: &Vec<(u64, u64)>, board: u64) -> Vec<u64> {
+fn holes_of(compiter: &ArrayVec<(u64, u64), 60>, board: u64) -> Vec<u64> {
     let mut existing: Vec<u64> = Vec::new();
     for (bit, around) in compiter {
         if 0 == (board & bit) {
@@ -369,7 +370,7 @@ fn holes_of(compiter: &Vec<(u64, u64)>, board: u64) -> Vec<u64> {
     }
     existing
 }
-fn holes_five(compiter: &Vec<(u64, u64)>,
+fn holes_five(compiter: &ArrayVec<(u64, u64), 60>,
         bitcounter: [u8; 256], board: u64) -> bool {
     let existing = holes_of(compiter, board);
     let mut fiveonly: bool = true;
