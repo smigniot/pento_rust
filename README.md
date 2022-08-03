@@ -1,4 +1,4 @@
-#Pentominos in Rust
+# Pentominos in Rust
 
 See
 * https://en.wikipedia.org/wiki/Pentomino#Constructing_rectangular_dimensions
@@ -6,13 +6,13 @@ See
 * https://github.com/smigniot/Polyomino
 * https://rustup.rs/
 
-#Build instructions
+# Build instructions
 
 * Follow the instructions at https://rustup.rs/ . This gets you `cargo` and `rustc` executables
 * Clone this repository, `git clone https://github.com/smigniot/pento_rust.git`
 * Inside the pento_rust directory, run `cargo run`
 
-#Performance testing
+# Performance testing
 
 * Follow the instructions at https://rustup.rs/ . This gets you `cargo` and `rustc` executables
 * Clone this repository, `git clone https://github.com/smigniot/pento_rust.git`
